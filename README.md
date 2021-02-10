@@ -1,4 +1,4 @@
-![Yamdb](https://github.com/da-semenov/yamdb_final/workflows/main.yml/badge.svg)
+![yamdb](https://github.com/da-semenov/yamdb_final/workflows/yamdb/badge.svg?branch=master)
 
 # API для сервиса YAMDB
 ## 
