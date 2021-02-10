@@ -8,7 +8,7 @@ class CustomUser(AbstractUser):
         USER = 'user', _('USER')
         MODERATOR = 'moderator', _('MODERATOR')
         ADMIN = 'admin', _('ADMIN')
-    
+
     email = models.EmailField(blank=False, unique=True)
     role = models.CharField(
         max_length=20,
