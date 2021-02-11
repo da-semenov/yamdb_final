@@ -23,4 +23,5 @@ posts/static/
 db.sqlite3
 ssh-key
 .ssh-key
-
+ssh-key.pub
+run.sh
