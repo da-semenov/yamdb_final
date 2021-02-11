@@ -59,10 +59,17 @@ jobs:
           username: ${{ secrets.USER }}
           key: ${{ secrets.SSH_KEY }}
           passphrase: ${{ secrets.PASSPHRASE }}
-          script: |
-            cd yamdb
-            sudo docker-compose pull web
-            sudo docker-compose up --force-recreate -d web
+          source: "docker-compose.yaml, nginx/nginx.conf"
+            target: "~/code/"
+            script: |
+              sudo apt-get update -y
+              sudo apt-get remove docker docker-engine docker.io -y
+              sudo apt install docker.io -y
+              sudo systemctl start docker
+              sudo systemctl enable docker
+              sudo docker pull ${{ secrets.DOCKER_USERNAME }}/yamdb_final
+              sudo docker stop $(sudo docker ps -a -q)
+              sudo docker run --rm -d -p 8000:8000 ${{ secrets.DOCKER_USERNAME }}/yamdb_final
 
   send_message:
     name: Send message to Telegram
