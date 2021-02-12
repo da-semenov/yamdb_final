@@ -15,7 +15,7 @@ services:
       - ./.env
 
   web:
-    image: dasemenov/yamdb:v3.0
+    image: dasemenov/yamdb:v4.0
     restart: always
     depends_on:
       - db
