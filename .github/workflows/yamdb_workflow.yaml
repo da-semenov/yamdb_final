@@ -61,7 +61,7 @@ jobs:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USER }}
           key: ${{ secrets.SSH_KEY }}
-          source: "docker-compose.yaml, nginx/default.conf, static, media, .env"
+          source: "docker-compose.yaml, nginx/default.conf, static, media, .env, .env.example"
           target: ${{ env.PROJECT_ROOT }}
       - name: executing remote ssh commands to deploy
         uses: appleboy/ssh-action@master
@@ -70,6 +70,11 @@ jobs:
           username: ${{ secrets.USER }}
           key: ${{ secrets.SSH_KEY }}
           script: |
+            sudo apt-get update -y
+            sudo apt-get remove docker docker-engine docker.io -y
+            sudo apt install docker.io docker-compose -y
+            sudo systemctl start docker
+            sudo systemctl enable docker
             cd ${{ env.PROJECT_ROOT }}
             sudo docker pull dasemenov/yamdb_final:latest
             sudo docker-compose stop
