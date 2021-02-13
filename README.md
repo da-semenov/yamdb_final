@@ -7,74 +7,82 @@
 [![docker](https://img.shields.io/badge/-Docker-464646??style=flat-square&logo=docker)](https://www.docker.com/)
 [![GitHub%20Actions](https://img.shields.io/badge/-GitHub%20Actions-464646??style=flat-square&logo=GitHub%20actions)](https://github.com/features/actions)
 
-# API для сервиса YAMDB
+# Continuous Integration проекта YaMDB
 ## 
-**YAMDB**  представляет собой базу отзывов пользователей о фильмах, книгах и музыке.
-Проект представляет собой web-приложение и базу данных, поднятых в двух docker-контейнерах.
+YAMDB представляет собой базу отзывов пользователей о фильмах, книгах и музыке. Это API проекта YaMDB, который собирает отзывы (Review) пользователей на произведения (Title). Произведения делятся на категории (Category). В каждой категории есть произведения: книги, фильмы или музыка. Произведению может быть присвоен жанр (Genres) из списка предустановленных. Новые жанры может создавать только администратор. Благодарные или возмущённые читатели оставляют к произведениям текстовые отзывы (Review) и выставляют произведению рейтинг. Сами произведения не хранятся, здесь нельзя посмотреть фильм или послушать музыку.
 
 При разработке приложения использованы фреймфорки ```django и django-rest-framework```. В качестве базы выступает ```postgresql```.
-Запуск проекта осуществляется средствами ```docker```.
+Запуск проекта осуществляется средствами ```docker```. 
+Для проекта настроен Continuous Integration и Continuous Deployment:
+* автоматический запуск тестов и проверка кода на соответствие стандарту PEP8
+* сборка и доставка докер-образов на Docker Hub
+* автоматический деплой на боевой сервер при пуше в master после успешного прохождения всех тестов
+* отправка уведомления в Telegram о успешном прохождении всех этапов
+
+Для Continuous Integration в проекте используется облачный сервис GitHub Actions. Для него описана последовательность команд (workflow), которая будет выполняться после события push в репозиторий.
 
 ## Установка
 
 #### 1. Клонируйте репозиторий на локальную машину
 ```bash
-git clone https://github.com/da-semenov/infra_sp2
+git clone https://github.com/da-semenov/yamdb_final
 ```
 
-#### 2. В корневой папке необходимо создать файл .env с данными для подключения к базе данных ```postgresql``` по примеру:
-DB_ENGINE=django.db.backends.postgresql # указываем, что работаем с postgresql
+#### 2. В корневой папке проекта на сервере необходимо создать файл .env с данными для подключения к базе данных ```postgresql```.
+В репозитории есть образец .env.example.
 
-DB_NAME=postgres # имя базы данных
 
-POSTGRES_USER=postgres # логин для подключения к базе данных
+#### 3. Добавьте Action secrets в репозитории на GitHub в разделе settings -> Secrets:
+* HOST - ip-адрес сервера
+* SSH_KEY - приватный ssh ключ
+* DOCKER_USERNAME - логин DockerHub
+* DOCKER_PASSWORD - пароль DockerHub
+* TELEGRAM_TO - id вашего телеграм-аккаунта (можно узнать у @userinfobot, команда /start)
+* TELEGRAM_TOKEN - токен бота (получить токен можно у @BotFather, /token, имя бота)
 
-POSTGRES_PASSWORD=postgres # пароль для подключения к БД (установите свой)
 
-DB_HOST=db # название сервиса (контейнера)
-
-DB_PORT=5432 # порт для подключения к БД
-
-#### 3. Установите docker и docker-compose
-
-Если у вас уже установлены docker и docker-compose, этот шаг можно пропустить, иначе можно воспользоваться официальной [инструкцией](https://docs.docker.com/engine/install/).
-
-#### 4. Запустите процесс сборки и запуска контейнеров
+#### 4. После выполнения push необходимо зайти на сервер
 ```bash
-docker-compose up
+$ ssh username@server_address
 ```
 
-#### 5. Запустите терминал внутри контейнера
+#### 5. Отобразить список работающих контейнеров
 ```bash
-docker-compose exec web bash
+$ sudo docker container ls
 ```
 
-#### 6. Выполните миграции
+#### 6. Зайти в контейнер yamdb по id контейнера
+```bash
+sudo docker exec -it 1223456789012 bash
+```
+
+#### 7. Выполнить миграции внутри этого контейнера
 ```bash
 python manage.py migrate
 ```
 
-#### 7. Создайте суперпользователя для работы с админкой ```Django```
+#### 8. Собрать статику
+```bash
+python manage.py collectstatic
+```
+
+#### 9. Создайте суперпользователя для работы с админкой ```Django```
 ```bash
 python manage.py createsuperuser
-```
-
-#### 8. Заполните базу тестовыми данными (по желанию)
-```bash
-python manage.py loaddata fixtures.json
-```
-
-#### 9. Остановить работу можно командой
-```bash
-docker-compose down
 ```
 
 ## Работа с api
 Документация по всем командам описана в redoc
 
 ## Основные использованные технологии
-* python 3.8
+* [python 3.8](https://www.python.org/)
 * [django](https://www.djangoproject.com/)
 * [drf](https://www.django-rest-framework.org/)
 * [posgresql](https://www.postgresql.org/)
 * [docker](https://www.docker.com/)
+* [nginx](https://nginx.org/)
+
+## Автор
+
+* **Семенов Денис** - [da-semenov](https://github.com/da-semenov)
+* **Сайт:** http://130.193.41.43/api/v1/
