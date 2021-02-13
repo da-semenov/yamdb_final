@@ -34,7 +34,9 @@ git clone https://github.com/da-semenov/yamdb_final
 
 #### 3. Добавьте Action secrets в репозитории на GitHub в разделе settings -> Secrets:
 * HOST - ip-адрес сервера
+* USER - имя пользователя для подключения к серверу
 * SSH_KEY - приватный ssh ключ
+* PASSPHRASE - если при создании ssh-ключа вы использовали фразу-пароль, то добавьте также переменную
 * DOCKER_USERNAME - логин DockerHub
 * DOCKER_PASSWORD - пароль DockerHub
 * TELEGRAM_TO - id вашего телеграм-аккаунта (можно узнать у @userinfobot, команда /start)
@@ -53,7 +55,7 @@ $ sudo docker container ls
 
 #### 6. Зайти в контейнер yamdb по id контейнера
 ```bash
-sudo docker exec -it 1223456789012 bash
+$ sudo docker exec -it 1223456789012 bash
 ```
 
 #### 7. Выполнить миграции внутри этого контейнера
@@ -73,6 +75,7 @@ python manage.py createsuperuser
 
 ## Работа с api
 Документация по всем командам описана в redoc
+* http://0.0.0.0/redoc/
 
 ## Основные использованные технологии
 * [python 3.8](https://www.python.org/)
